@@ -1,8 +1,8 @@
 import Bases.TestBase;
+import Enums.Relations;
 import Pages.FriendsPage;
 import Pages.LoginPage;
 import Pages.UserMainPage;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,15 +14,17 @@ import static Enums.Friends.RUSLAN_SULTAN;
 import static Enums.Friends.VLADISLAV_SENKO;
 import static Enums.LoginInfo.LOGIN;
 import static Enums.LoginInfo.PASSWORD;
+import static Enums.Pages.FRIENDS;
+import static Enums.Relations.*;
 
-public class SimpleTest5 extends TestBase {
+public class FriendsPageTest extends TestBase {
     private String baseUrl;
     private LoginPage loginPage;
     private UserMainPage userMainPage;
     private FriendsPage friendsPage;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         driver = new ChromeDriver();
         loginPage = PageFactory.initElements(driver, LoginPage.class);
         userMainPage = PageFactory.initElements(driver, UserMainPage.class);
@@ -34,11 +36,14 @@ public class SimpleTest5 extends TestBase {
     }
 
     @Test()
-    public void simpleTest() throws Exception {
+    public void friendsPageTest() {
         loginPage.login(LOGIN, PASSWORD);
-        userMainPage.openFriendsPage();
-        friendsPage.getFriendCard(VLADISLAV_SENKO).write("Привет, Влад!");
-        friendsPage.getFriendCard(RUSLAN_SULTAN).write("Привет, Руслан!");
+        userMainPage.openPage(FRIENDS);
+//        friendsPage.getFriendCard(VLADISLAV_SENKO).writeMessage("Привет, Влад!");
+//        friendsPage.getFriendCard(RUSLAN_SULTAN).writeMessage("Привет, Руслан!");
+//        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(COLLEAGUE);
+        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(GROUPMATE,WAR_BUDDY);
+//        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(GAME_FRIEND);
     }
 
 //    @After
