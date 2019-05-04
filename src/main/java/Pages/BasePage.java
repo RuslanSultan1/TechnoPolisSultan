@@ -19,7 +19,7 @@ public abstract class BasePage {
     @FindBy(css = ".toolbar_nav_i_tx-w")
     List<WebElement> pages;
 
-    abstract boolean check();
+    public abstract void check();
 
     public void openPage(Pages pageName) {
         for (WebElement page : pages) {

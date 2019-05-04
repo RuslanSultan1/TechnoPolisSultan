@@ -6,10 +6,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FriendsCard {
     private WebDriver driver;
@@ -27,6 +31,8 @@ public class FriendsCard {
     private List<WebElement> relations;
     @FindBy(id = "hook_FormButton_button_save_rlshp")
     private WebElement saveButton;
+    @FindBy(xpath = "//div[contains(@class, 'msg js-msg soh-s')][last()]//*[@class='msg_tx_cnt']")
+    private WebElement lastMessage;
     private static By checkbox = By.xpath(".//input[@type='checkbox']");
 
     FriendsCard(WebDriver driver) {
@@ -34,15 +40,46 @@ public class FriendsCard {
         PageFactory.initElements(driver, this);
     }
 
-    public void writeMessage(String message) {
+    public void sendMessage(String message) {
         writeMessage.click();
         messageField.sendKeys(message);
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(sendButton));
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(sendButton));
         sendButton.click();
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeButton));
+        new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
+                -> lastMessage.getText().equals(message));
+        assertEquals(lastMessage.getText(), message);
         closeButton.click();
     }
 
-    //    public void specifyRelation(Relations... relations1) {
+    public void sendRandomMessage() {
+        writeMessage.click();
+        Random random = new Random();
+        String message = "Message" + random.nextInt();
+        messageField.sendKeys(message);
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(sendButton));
+        sendButton.click();
+        new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
+                -> lastMessage.getText().equals(message));
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeButton));
+        assertEquals(lastMessage.getText(), message);
+        closeButton.click();
+    }
+
+    public void specifyRelation(Relations... relations1) {
+        specifyRelation.click();
+        //new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(saveButton));
+        for (WebElement relation : relations) {
+            for (Relations relation1 : relations1) {
+                if (relation.getText().equals(relation1.toString())) {
+                    relation.findElement(checkbox).click();
+                    assertTrue(relation.findElement(checkbox).isSelected());
+                }
+            }
+        }
+        saveButton.click();
+    }
+//        public void specifyRelation(Relations... relations1) {
 //        specifyRelation.click();
 //        for (WebElement relation : relations) {
 //            if (relation.findElement(checkbox).isSelected()) relation.findElement(checkbox).click();
@@ -54,15 +91,5 @@ public class FriendsCard {
 //        }
 //        saveButton.click();
 //    }
-    public void specifyRelation(Relations... relations1) {
-        specifyRelation.click();
-        //new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(saveButton));
-        for (WebElement relation : relations) {
-            for (Relations relation1 : relations1) {
-                if (relation.getText().equals(relation1.toString())) relation.findElement(checkbox).click();
-            }
-        }
-        saveButton.click();
-    }
 
 }

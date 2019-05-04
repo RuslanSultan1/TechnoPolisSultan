@@ -1,5 +1,4 @@
 import Bases.TestBase;
-import Enums.Relations;
 import Pages.FriendsPage;
 import Pages.LoginPage;
 import Pages.UserMainPage;
@@ -13,9 +12,11 @@ import java.util.concurrent.TimeUnit;
 import static Enums.Friends.RUSLAN_SULTAN;
 import static Enums.Friends.VLADISLAV_SENKO;
 import static Enums.LoginInfo.LOGIN;
+import static Enums.LoginInfo.LOGIN_PAGE_URL;
 import static Enums.LoginInfo.PASSWORD;
 import static Enums.Pages.FRIENDS;
-import static Enums.Relations.*;
+import static Enums.Relations.COLLEAGUE;
+import static Enums.Relations.GROUPMATE;
 
 public class FriendsPageTest extends TestBase {
     private String baseUrl;
@@ -24,26 +25,25 @@ public class FriendsPageTest extends TestBase {
     private FriendsPage friendsPage;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         driver = new ChromeDriver();
         loginPage = PageFactory.initElements(driver, LoginPage.class);
         userMainPage = PageFactory.initElements(driver, UserMainPage.class);
         friendsPage = new FriendsPage(driver);
-        baseUrl = "https://ok.ru/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        driver.get(baseUrl + "/dk?st.cmd=anonymMain&st.layer.cmd=PopLayerClose");
+        driver.get(LOGIN_PAGE_URL.toString());
     }
 
     @Test()
-    public void friendsPageTest() {
+    public void friendsPageTest() throws InterruptedException {
         loginPage.login(LOGIN, PASSWORD);
         userMainPage.openPage(FRIENDS);
-//        friendsPage.getFriendCard(VLADISLAV_SENKO).writeMessage("Привет, Влад!");
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).writeMessage("Привет, Руслан!");
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(COLLEAGUE);
-        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(GROUPMATE,WAR_BUDDY);
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(GAME_FRIEND);
+        friendsPage.check();
+        friendsPage.getFriendCard(VLADISLAV_SENKO).sendMessage("Привет, Влад!");
+        friendsPage.getFriendCard(RUSLAN_SULTAN).sendMessage("Привет, Руслан!");
+        friendsPage.getFriendCard(RUSLAN_SULTAN).sendRandomMessage();
+        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(COLLEAGUE,GROUPMATE);
     }
 
 //    @After

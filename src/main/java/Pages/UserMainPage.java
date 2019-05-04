@@ -5,7 +5,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class UserMainPage extends BasePage {
     @Override
-    boolean check() {
+    public void check() {
         throw new UnsupportedOperationException();
     }
 

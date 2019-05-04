@@ -6,8 +6,8 @@ import org.openqa.selenium.support.FindBy;
 
 public class LoginPage extends BasePage {
     @Override
-    boolean check() {
-        return false;
+    public void check() {
+        throw new UnsupportedOperationException();
     }
 
     @FindBy(xpath = ".//input[@id='field_email']")
