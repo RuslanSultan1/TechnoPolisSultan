@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.Random;
 
+import static Enums.AssertsTexts.INVITATION_TO_GROUP_TEXT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -24,7 +25,7 @@ public class FriendsCard {
     @FindBy(xpath = "//button[@class='button-pro comments_add-controls_save']")
     private WebElement sendButton;
     @FindBy(xpath = "//div[@class='toolbar-layer_close h-mod']//*[@class='svg-ic svg-ico_close_16']")
-    private WebElement closeButton;
+    private WebElement closeMessage;
     @FindBy(xpath = "//span[text()='Указать, кто он вам']")
     private WebElement specifyRelation;
     @FindBy(css = "li.form_ul_li")
@@ -34,6 +35,12 @@ public class FriendsCard {
     @FindBy(xpath = "//div[contains(@class, 'msg js-msg soh-s')][last()]//*[@class='msg_tx_cnt']")
     private WebElement lastMessage;
     private static By checkbox = By.xpath(".//input[@type='checkbox']");
+    @FindBy(xpath = "//span[text()='Пригласить в группу']")
+    private WebElement inviteToGroup;
+    @FindBy(id = "hook_Block_InviteUserToGroup2GroupsList")
+    private WebElement invitationText;
+    @FindBy(xpath = "//a[@id='nohook_modal_close']")
+    private WebElement closeInvitation;
 
     FriendsCard(WebDriver driver) {
         this.driver = driver;
@@ -45,11 +52,11 @@ public class FriendsCard {
         messageField.sendKeys(message);
 //        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(sendButton));
         sendButton.click();
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeButton));
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeMessage));
         new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
         assertEquals(lastMessage.getText(), message);
-        closeButton.click();
+        closeMessage.click();
     }
 
     public void sendRandomMessage() {
@@ -61,9 +68,9 @@ public class FriendsCard {
         sendButton.click();
         new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeButton));
+//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeMessage));
         assertEquals(lastMessage.getText(), message);
-        closeButton.click();
+        closeMessage.click();
     }
 
     public void specifyRelation(Relations... relations1) {
@@ -78,6 +85,12 @@ public class FriendsCard {
             }
         }
         saveButton.click();
+    }
+
+    public void inviteToGroup() {
+        inviteToGroup.click();
+        assertEquals(INVITATION_TO_GROUP_TEXT.toString(), invitationText.getText());
+        closeInvitation.click();
     }
 //        public void specifyRelation(Relations... relations1) {
 //        specifyRelation.click();

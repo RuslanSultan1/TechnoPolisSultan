@@ -9,12 +9,20 @@ import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FriendsPage extends BasePage {
     public FriendsPage(WebDriver driver) {
         init(driver);
     }
+
+    @FindBy(id = "mainContentLeftColumn")
+    private WebElement leftColumn;
+    @FindBy(id = "mainContentContentColumn")
+    private WebElement mainContentColumn;
+    @FindBy(css = ".user-grid-card")
+    List<WebElement> friendCards;
 
     @Override
     public void check() {
@@ -24,21 +32,19 @@ public class FriendsPage extends BasePage {
         assertTrue(mainContentColumn.isDisplayed());
     }
 
-    @FindBy(className = "toolbar_c")
-    private WebElement navigationToolbar;
-    @FindBy(id = "mainContentLeftColumn")
-    private WebElement leftColumn;
-    @FindBy(id = "mainContentContentColumn")
-    private WebElement mainContentColumn;
-    @FindBy(css = ".user-grid-card")
-    List<WebElement> friendCards;
-
     public FriendsCard getFriendCard(Friends friend) {
-        WebElement friendCard = driver.findElement(By.xpath("//a[@class='n-t bold'][contains(text(),'" +
-                friend.toString() + "')]"));
+        WebElement friendCard = driver.findElement(By.xpath("//a[@class='n-t bold'][text()='" +
+                friend.toString() + "']"));
         Actions actions = new Actions(driver);
         actions.moveToElement(friendCard).perform();
+        assertEquals(friend.toString(), friendCard.getText());
         return new FriendsCard(driver);
+    }
+
+    public void openFriendPage(Friends friend) {
+        WebElement friendCard = driver.findElement(By.xpath("//a[@class='n-t bold'][text()='" +
+                friend.toString() + "']"));
+        friendCard.click();
     }
 //    public FriendsCard getFriendCard(Friends friend) {
 //        for (WebElement friendCard : friendCards) {

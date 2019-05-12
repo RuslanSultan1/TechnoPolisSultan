@@ -1,5 +1,5 @@
 import Bases.TestBase;
-import Pages.FriendsPage;
+import Pages.VideoPage;
 import Pages.LoginPage;
 import Pages.UserMainPage;
 import org.junit.After;
@@ -9,41 +9,32 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.concurrent.TimeUnit;
 
-import static Enums.Friends.RUSLAN_SULTAN;
-import static Enums.Friends.VLADISLAV_SENKO;
 import static Enums.LoginInfo.*;
 import static Enums.Pages.FRIENDS;
-import static Enums.Relations.COLLEAGUE;
-import static Enums.Relations.GROUPMATE;
 
-public class FriendsPageTest extends TestBase {
+public class VideoPageTest extends TestBase {
     private LoginPage loginPage;
     private UserMainPage userMainPage;
-    private FriendsPage friendsPage;
+    private VideoPage videoPage;
 
     @Before
     public void setUp() {
         driver = new ChromeDriver();
         loginPage = new LoginPage(driver);
         userMainPage = new UserMainPage(driver);
-        friendsPage = new FriendsPage(driver);
+        videoPage = new VideoPage(driver);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         driver.get(LOGIN_PAGE_URL.toString());
     }
 
     @Test()
-    public void friendsPageTest() {
+    public void videoPageTest() {
         loginPage.check();
         loginPage.login(LOGIN, PASSWORD);
         userMainPage.check();
         userMainPage.openPage(FRIENDS);
-        friendsPage.check();
-//        friendsPage.getFriendCard(VLADISLAV_SENKO).sendMessage("Привет, Влад!");
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).sendMessage("Привет, Руслан!");
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).sendRandomMessage();
-//        friendsPage.getFriendCard(RUSLAN_SULTAN).specifyRelation(COLLEAGUE, GROUPMATE);
-        friendsPage.getFriendCard(VLADISLAV_SENKO).inviteToGroup();
+        videoPage.check();
     }
 
     @After

@@ -10,6 +10,8 @@ import java.util.List;
 
 public abstract class BasePage {
     protected WebDriver driver;
+    @FindBy(className = "toolbar_c")
+    protected WebElement navigationToolbar;
 
     protected void init(WebDriver driver) {
         this.driver = driver;
