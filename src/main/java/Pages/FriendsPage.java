@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 public class FriendsPage extends BasePage {
     public FriendsPage(WebDriver driver) {
-        init(driver);
+        super(driver);
     }
 
     @FindBy(id = "mainContentLeftColumn")

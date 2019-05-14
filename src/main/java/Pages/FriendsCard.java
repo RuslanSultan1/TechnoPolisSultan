@@ -18,6 +18,12 @@ import static org.junit.Assert.assertTrue;
 
 public class FriendsCard {
     private WebDriver driver;
+
+    FriendsCard(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
     @FindBy(xpath = "//span[text()='Написать сообщение']")
     private WebElement writeMessage;
     @FindBy(name = "st.txt")
@@ -42,18 +48,13 @@ public class FriendsCard {
     @FindBy(xpath = "//a[@id='nohook_modal_close']")
     private WebElement closeInvitation;
 
-    FriendsCard(WebDriver driver) {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-    }
-
     public void sendMessage(String message) {
         writeMessage.click();
         messageField.sendKeys(message);
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(sendButton));
+//        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(sendButton));
         sendButton.click();
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeMessage));
-        new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
+//        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(closeMessage));
+        new WebDriverWait(driver, 15).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
         assertEquals(lastMessage.getText(), message);
         closeMessage.click();
@@ -64,18 +65,18 @@ public class FriendsCard {
         Random random = new Random();
         String message = "Message" + random.nextInt();
         messageField.sendKeys(message);
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(sendButton));
+//        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(sendButton));
         sendButton.click();
-        new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) webDriver
+        new WebDriverWait(driver, 15).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
-//        new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(closeMessage));
+//        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(closeMessage));
         assertEquals(lastMessage.getText(), message);
         closeMessage.click();
     }
 
     public void specifyRelation(Relations... relations1) {
         specifyRelation.click();
-        //new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(saveButton));
+        //new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(saveButton));
         for (WebElement relation : relations) {
             for (Relations relation1 : relations1) {
                 if (relation.getText().equals(relation1.toString())) {

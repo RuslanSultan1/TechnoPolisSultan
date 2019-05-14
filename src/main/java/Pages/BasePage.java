@@ -12,8 +12,12 @@ public abstract class BasePage {
     protected WebDriver driver;
     @FindBy(className = "toolbar_c")
     protected WebElement navigationToolbar;
+    @FindBy(id = "middleColumn")
+    protected WebElement middleColumn;
+    @FindBy(id = "leftColumn")
+    protected WebElement leftColumn;
 
-    protected void init(WebDriver driver) {
+    public BasePage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }

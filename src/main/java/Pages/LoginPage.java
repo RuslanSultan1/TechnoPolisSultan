@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 public class LoginPage extends BasePage {
     public LoginPage(WebDriver driver) {
-        init(driver);
+        super(driver);
     }
 
     @Override
