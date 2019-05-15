@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 
 import static Enums.AssertsTexts.VIDEO_PAGE_URL;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.openqa.selenium.support.ui.ExpectedConditions.or;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOf;
@@ -25,7 +26,7 @@ public class VideoPage extends BasePage {
     private WebElement channelsFound;
     @FindBy(css = "#listBlockPanelVideoSearchResultMoviesBlock .portlet_h_name_t")
     private WebElement videosFound;
-    @FindBy(className = "stub-empty_t")
+    @FindBy(className = ".__video-card .stub-empty_t")
     private WebElement nothingFound;
     @FindBy(css = "#listBlockPanelVideoSearchResultMoviesBlock .ugrid_i:first-child .video-card_lk")
     private WebElement firstVideo;
@@ -42,8 +43,6 @@ public class VideoPage extends BasePage {
     public void searchVideo(String videoName) {
         searchBar.clear();
         searchBar.sendKeys(videoName);
-//        new WebDriverWait(driver, 15).until(or(visibilityOf(channelsFound), visibilityOf(videosFound),
-//                visibilityOf(nothingFound)));
         assertTrue(channelsFound.isDisplayed() || videosFound.isDisplayed() || nothingFound.isDisplayed());
     }
 

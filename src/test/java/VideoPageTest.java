@@ -37,9 +37,9 @@ public class VideoPageTest extends TestBase {
         userMainPage.check();
         userMainPage.openPage(VIDEO);
         videoPage.check();
-        videoPage.searchVideo("cats");
+//        videoPage.searchVideo("cats");
         videoPage.searchVideo("sfzgfhxgjhfjhhxdzfSAFSEhsthtxdzgfghzdrtggvgh");
-        videoPage.searchAndOpenVideo("cats").stopVideo();
+//        videoPage.searchAndOpenVideo("cats").stopVideo();
     }
 
 //    @After
