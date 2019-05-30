@@ -4,6 +4,7 @@ import Enums.Relations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -18,10 +19,12 @@ import static org.junit.Assert.assertTrue;
 
 public class FriendsCard {
     private WebDriver driver;
+    private WebElement friendCard;
 
-    FriendsCard(WebDriver driver) {
+    FriendsCard(WebDriver driver, WebElement friendcard) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
+        this.friendCard = friendcard;
     }
 
     @FindBy(xpath = "//span[text()='Написать сообщение']")
@@ -38,6 +41,8 @@ public class FriendsCard {
     private List<WebElement> relations;
     @FindBy(id = "hook_FormButton_button_save_rlshp")
     private WebElement saveButton;
+    @FindBy(id = "nohook_modal_close")
+    private WebElement closeSpecifyRelation;
     @FindBy(xpath = "//div[contains(@class, 'msg js-msg soh-s')][last()]//*[@class='msg_tx_cnt']")
     private WebElement lastMessage;
     private static By checkbox = By.xpath(".//input[@type='checkbox']");
@@ -48,7 +53,21 @@ public class FriendsCard {
     @FindBy(xpath = "//a[@id='nohook_modal_close']")
     private WebElement closeInvitation;
 
+    private void moveToCard() {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(friendCard).perform();
+    }
+
+    public String getLastMessage() {
+        moveToCard();
+        writeMessage.click();
+        String message = lastMessage.getText();
+        closeMessage.click();
+        return message;
+    }
+
     public void sendMessage(String message) {
+        moveToCard();
         writeMessage.click();
         messageField.sendKeys(message);
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(sendButton));
@@ -56,11 +75,12 @@ public class FriendsCard {
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(closeMessage));
         new WebDriverWait(driver, 15).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
-        assertEquals(lastMessage.getText(), message);
+//        assertEquals(lastMessage.getText(), message);
         closeMessage.click();
     }
 
-    public void sendRandomMessage() {
+    public void sendAndCheckRandomMessage() {
+        moveToCard();
         writeMessage.click();
         Random random = new Random();
         String message = "Message" + random.nextInt();
@@ -75,24 +95,47 @@ public class FriendsCard {
     }
 
     public void specifyRelation(Relations... relations1) {
+        moveToCard();
         specifyRelation.click();
         //new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(saveButton));
         for (WebElement relation : relations) {
             for (Relations relation1 : relations1) {
-                if (relation.getText().equals(relation1.toString())) {
+                if (relation.getText().equals(relation1.toString()) &&
+                        (!relation.findElement(checkbox).isSelected())) {
                     relation.findElement(checkbox).click();
-                    assertTrue(relation.findElement(checkbox).isSelected());
+//                    assertTrue(relation.findElement(checkbox).isSelected());
                 }
             }
         }
         saveButton.click();
     }
 
+    public void checkRelations(Relations... relations1) {
+        moveToCard();
+        specifyRelation.click();
+        for (WebElement relation : relations) {
+            for (Relations relation1 : relations1) {
+                if (relation.getText().equals(relation1.toString())) {
+                    assertTrue(relation.findElement(checkbox).isSelected());
+                }
+            }
+        }
+        closeSpecifyRelation.click();
+    }
+
     public void inviteToGroup() {
+        moveToCard();
         inviteToGroup.click();
         assertEquals(INVITATION_TO_GROUP_TEXT.toString(), invitationText.getText());
         closeInvitation.click();
     }
+//    public String getInvitationToGroupText(){
+//        moveToCard();
+//        inviteToGroup();
+//        String text=invitationText.getText();
+//        closeInvitation.click();
+//        return text;
+//    }
 //        public void specifyRelation(Relations... relations1) {
 //        specifyRelation.click();
 //        for (WebElement relation : relations) {

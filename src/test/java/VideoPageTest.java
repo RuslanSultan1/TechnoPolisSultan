@@ -3,7 +3,6 @@ import Pages.VideoCard;
 import Pages.VideoPage;
 import Pages.LoginPage;
 import Pages.UserMainPage;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -11,7 +10,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.concurrent.TimeUnit;
 
 import static Enums.LoginInfo.*;
-import static Enums.Pages.FRIENDS;
 import static Enums.Pages.VIDEO;
 
 public class VideoPageTest extends TestBase {
@@ -22,24 +20,26 @@ public class VideoPageTest extends TestBase {
     @Before
     public void setUp() {
         driver = new ChromeDriver();
-        loginPage = new LoginPage(driver);
-        userMainPage = new UserMainPage(driver);
-        videoPage = new VideoPage(driver);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         driver.get(LOGIN_PAGE_URL.toString());
+        loginPage = new LoginPage(driver);
     }
 
     @Test()
     public void videoPageTest() {
-        loginPage.check();
-        loginPage.login(LOGIN, PASSWORD);
-        userMainPage.check();
+        loginPage.login(IVAN_LOGIN, IVAN_PASSWORD);
+        userMainPage = new UserMainPage(driver);
         userMainPage.openPage(VIDEO);
-        videoPage.check();
-//        videoPage.searchVideo("cats");
-        videoPage.searchVideo("sfzgfhxgjhfjhhxdzfSAFSEhsthtxdzgfghzdrtggvgh");
-//        videoPage.searchAndOpenVideo("cats").stopVideo();
+        videoPage = new VideoPage(driver);
+//        videoPage.searchVideo("sfzgfhxgjhfjhhxdzfSAFSEhsthtxdzgfghzdrtggvgh");
+        videoPage.searchVideo("cats");
+        VideoCard firstVideo = videoPage.openFirstVideo();
+        firstVideo.stopVideo();
+        System.out.println("gszfdhdxfhd");
+//        firstVideo.playVideo();
+//        firstVideo.stopVideo();
+        firstVideo.likeVideo();
     }
 
 //    @After

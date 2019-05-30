@@ -20,6 +20,7 @@ public abstract class BasePage {
     public BasePage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
+        check();
     }
 
     @FindBy(css = ".toolbar_nav_i_tx-w")

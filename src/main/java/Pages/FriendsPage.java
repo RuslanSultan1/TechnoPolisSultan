@@ -35,10 +35,8 @@ public class FriendsPage extends BasePage {
     public FriendsCard getFriendCard(Friends friend) {
         WebElement friendCard = driver.findElement(By.xpath("//a[@class='n-t bold'][text()='" +
                 friend.toString() + "']"));
-        Actions actions = new Actions(driver);
-        actions.moveToElement(friendCard).perform();
         assertEquals(friend.toString(), friendCard.getText());
-        return new FriendsCard(driver);
+        return new FriendsCard(driver,friendCard);
     }
 
     public void openFriendPage(Friends friend) {

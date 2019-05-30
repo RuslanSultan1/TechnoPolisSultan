@@ -4,10 +4,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.NoSuchElementException;
 
+import static Enums.AssertsTexts.NOTHING_FOUND_TEXT;
+import static Enums.AssertsTexts.VIDEOS_FOUND_REGEX;
 import static Enums.AssertsTexts.VIDEO_PAGE_URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,7 +28,7 @@ public class VideoPage extends BasePage {
     private WebElement channelsFound;
     @FindBy(css = "#listBlockPanelVideoSearchResultMoviesBlock .portlet_h_name_t")
     private WebElement videosFound;
-    @FindBy(className = ".__video-card .stub-empty_t")
+    @FindBy(css = ".__video-card .stub-empty_t")
     private WebElement nothingFound;
     @FindBy(css = "#listBlockPanelVideoSearchResultMoviesBlock .ugrid_i:first-child .video-card_lk")
     private WebElement firstVideo;
@@ -43,20 +45,21 @@ public class VideoPage extends BasePage {
     public void searchVideo(String videoName) {
         searchBar.clear();
         searchBar.sendKeys(videoName);
-        assertTrue(channelsFound.isDisplayed() || videosFound.isDisplayed() || nothingFound.isDisplayed());
+    }
+    public void assertVideos(){
+        try {
+            assertTrue(videosFound.isDisplayed());
+            assertTrue(videosFound.getText().matches(VIDEOS_FOUND_REGEX.toString()));
+        } catch (NoSuchElementException e) {
+            assertTrue(nothingFound.isDisplayed());
+            assertEquals(NOTHING_FOUND_TEXT.toString(), nothingFound.getText());
+        }
     }
 
-    public VideoCard searchAndOpenVideo(String videoName) {
-        searchBar.clear();
-        searchBar.sendKeys(videoName);
-//        new WebDriverWait(driver, 15).until(or(visibilityOf(channelsFound), visibilityOf(videosFound),
-//                visibilityOf(nothingFound)));
-        assertTrue(channelsFound.isDisplayed() || videosFound.isDisplayed() || nothingFound.isDisplayed());
-        if (firstVideo.isDisplayed()) {
+    public VideoCard openFirstVideo() {
+//        assertTrue(channelsFound.isDisplayed() || videosFound.isDisplayed() || nothingFound.isDisplayed());
             firstVideo.click();
             return new VideoCard(driver);
-        }
-        throw new NoSuchElementException("No videos were found!");
     }
 
 }
