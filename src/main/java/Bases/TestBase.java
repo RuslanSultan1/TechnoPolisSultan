@@ -1,19 +1,27 @@
 package Bases;
 
-import org.openqa.selenium.*;
+import org.junit.After;
+import org.junit.Before;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.util.concurrent.TimeUnit;
+
+import static Enums.LoginInfo.LOGIN_PAGE_URL;
 
 public class TestBase {
-
     protected WebDriver driver;
+
     private boolean acceptNextAlert = true;
 
-    private boolean isElementPresent(By by) {
-        try {
-            driver.findElement(by);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+    @Before
+    public void mainSetUp() {
+        driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        driver.get(LOGIN_PAGE_URL.toString());
     }
 
     private boolean isAlertPresent() {
@@ -38,5 +46,10 @@ public class TestBase {
         } finally {
             acceptNextAlert = true;
         }
+    }
+
+    @After
+    public void after() {
+        driver.close();
     }
 }

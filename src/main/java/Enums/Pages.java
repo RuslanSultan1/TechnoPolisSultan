@@ -3,7 +3,7 @@ package Enums;
 public enum Pages {
     MESSAGES("Сообщения"),
     DISCUSSIONS("Обсуждения"),
-    NOTIFICATIONS("Уведомления"),
+    NOTIFICATIONS("Оповещения"),
     FRIENDS("Друзья"),
     GUESTS("Гости"),
     EVENTS("События"),

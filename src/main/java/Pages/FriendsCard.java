@@ -2,6 +2,7 @@ package Pages;
 
 import Enums.Relations;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -14,8 +15,7 @@ import java.util.List;
 import java.util.Random;
 
 import static Enums.AssertsTexts.INVITATION_TO_GROUP_TEXT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FriendsCard {
     private WebDriver driver;
@@ -45,7 +45,7 @@ public class FriendsCard {
     private WebElement closeSpecifyRelation;
     @FindBy(xpath = "//div[contains(@class, 'msg js-msg soh-s')][last()]//*[@class='msg_tx_cnt']")
     private WebElement lastMessage;
-    private static By checkbox = By.xpath(".//input[@type='checkbox']");
+    private final static By checkbox = By.xpath(".//input[@type='checkbox']");
     @FindBy(xpath = "//span[text()='Пригласить в группу']")
     private WebElement inviteToGroup;
     @FindBy(id = "hook_Block_InviteUserToGroup2GroupsList")
@@ -53,55 +53,77 @@ public class FriendsCard {
     @FindBy(xpath = "//a[@id='nohook_modal_close']")
     private WebElement closeInvitation;
 
+    public boolean isElementDisplayed(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
     private void moveToCard() {
         Actions actions = new Actions(driver);
+        assertTrue(isElementDisplayed(friendCard));
         actions.moveToElement(friendCard).perform();
     }
 
     public String getLastMessage() {
         moveToCard();
+//        assertTrue(isElementDisplayed(writeMessage));
         writeMessage.click();
+        assertTrue(isElementDisplayed(lastMessage));
         String message = lastMessage.getText();
+        assertTrue(isElementDisplayed(closeMessage));
         closeMessage.click();
         return message;
     }
 
     public void sendMessage(String message) {
         moveToCard();
+//        assertTrue(isElementDisplayed(writeMessage));
         writeMessage.click();
+        assertTrue(isElementDisplayed(messageField));
         messageField.sendKeys(message);
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(sendButton));
+        assertTrue(isElementDisplayed(sendButton));
         sendButton.click();
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(closeMessage));
         new WebDriverWait(driver, 15).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
 //        assertEquals(lastMessage.getText(), message);
+        assertTrue(isElementDisplayed(closeMessage));
         closeMessage.click();
     }
 
     public void sendAndCheckRandomMessage() {
         moveToCard();
+//        assertTrue(isElementDisplayed(writeMessage));
         writeMessage.click();
         Random random = new Random();
         String message = "Message" + random.nextInt();
+        assertTrue(isElementDisplayed(messageField));
         messageField.sendKeys(message);
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(sendButton));
+        assertTrue(isElementDisplayed(sendButton));
         sendButton.click();
         new WebDriverWait(driver, 15).until((ExpectedCondition<Boolean>) webDriver
                 -> lastMessage.getText().equals(message));
 //        new WebDriverWait(driver, 15).until(ExpectedConditions.elementToBeClickable(closeMessage));
         assertEquals(lastMessage.getText(), message);
+        assertTrue(isElementDisplayed(closeMessage));
         closeMessage.click();
     }
 
     public void specifyRelation(Relations... relations1) {
         moveToCard();
+//        assertTrue(isElementDisplayed(specifyRelation));
         specifyRelation.click();
         //new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(saveButton));
         for (WebElement relation : relations) {
             for (Relations relation1 : relations1) {
                 if (relation.getText().equals(relation1.toString()) &&
                         (!relation.findElement(checkbox).isSelected())) {
+                    assertTrue(isElementDisplayed(relation.findElement(checkbox)));
                     relation.findElement(checkbox).click();
 //                    assertTrue(relation.findElement(checkbox).isSelected());
                 }
@@ -113,12 +135,15 @@ public class FriendsCard {
     public void checkRelations(Relations... relations1) {
         moveToCard();
         specifyRelation.click();
+        label:
         for (WebElement relation : relations) {
             for (Relations relation1 : relations1) {
                 if (relation.getText().equals(relation1.toString())) {
                     assertTrue(relation.findElement(checkbox).isSelected());
+                    continue label;
                 }
             }
+            assertFalse(relation.findElement(checkbox).isSelected());
         }
         closeSpecifyRelation.click();
     }
@@ -127,6 +152,7 @@ public class FriendsCard {
         moveToCard();
         inviteToGroup.click();
         assertEquals(INVITATION_TO_GROUP_TEXT.toString(), invitationText.getText());
+        assertTrue(isElementDisplayed(closeInvitation));
         closeInvitation.click();
     }
 //    public String getInvitationToGroupText(){
@@ -136,7 +162,8 @@ public class FriendsCard {
 //        closeInvitation.click();
 //        return text;
 //    }
-//        public void specifyRelation(Relations... relations1) {
+
+//        public void specifyRelation1(Relations... relations1) {
 //        specifyRelation.click();
 //        for (WebElement relation : relations) {
 //            if (relation.findElement(checkbox).isSelected()) relation.findElement(checkbox).click();

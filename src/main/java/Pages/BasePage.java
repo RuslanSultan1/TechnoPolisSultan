@@ -1,12 +1,15 @@
 package Pages;
 
 import Enums.Pages;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 public abstract class BasePage {
     protected WebDriver driver;
@@ -16,6 +19,8 @@ public abstract class BasePage {
     protected WebElement middleColumn;
     @FindBy(id = "leftColumn")
     protected WebElement leftColumn;
+    @FindBy(css = ".toolbar_nav_i_tx-w")
+    List<WebElement> pages;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -23,14 +28,22 @@ public abstract class BasePage {
         check();
     }
 
-    @FindBy(css = ".toolbar_nav_i_tx-w")
-    List<WebElement> pages;
-
     public abstract void check();
+
+    public boolean isElementDisplayed(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
 
     public void openPage(Pages pageName) {
         for (WebElement page : pages) {
-            if (page.getText().contains(pageName.toString())) page.click();
+            if (page.getText().contains(pageName.toString())) {
+                assertTrue(isElementDisplayed(page));
+                page.click();
+            }
         }
     }
 }
