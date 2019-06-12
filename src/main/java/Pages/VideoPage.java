@@ -8,13 +8,16 @@ import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
 
-import static Enums.AssertsTexts.*;
 import static Enums.VideoSideMenuItems.CATALOG;
 import static Enums.VideoSideMenuItems.MY_VIDEO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class VideoPage extends BasePage {
+
+    private final static String VIDEO_PAGE_URL = ("https://ok.ru/video/top");
+    private final static String VIDEOS_FOUND_REGEX = ("Найдено \\d+ видео");
+    private final static String NOTHING_FOUND_TEXT = ("По вашему запросу ничего не найдено");
 
     public VideoPage(WebDriver driver) {
         super(driver);
@@ -68,7 +71,7 @@ public class VideoPage extends BasePage {
 
     @Override
     public void check() {
-        assertEquals(VIDEO_PAGE_URL.toString(), driver.getCurrentUrl());
+        assertEquals(VIDEO_PAGE_URL, driver.getCurrentUrl());
         assertTrue(navigationToolbar.isDisplayed());
         assertTrue(middleColumn.isDisplayed());
         assertTrue(leftColumn.isDisplayed());
@@ -76,21 +79,24 @@ public class VideoPage extends BasePage {
 
     public void unSubscribeFromChannel(String channelName) {
         for (WebElement element : channelsNameList) {
-            System.out.println(element.getText());
-            if (element.getText().contains(channelName)) {
+            if (element.getText().equals(channelName)) {
                 element.click();
             }
         }
-        subscribeBtn.click();
+        if (isElementPresent(subscribeBtn)) {
+            subscribeBtn.click();
+        }
     }
 
     private void upLoadMenuItemClick(String name) {
         for (WebElement element : uploadMenuItems) {
             if (element.getText().equals(name)) {
                 element.click();
+                break;
             }
         }
     }
+
 
 // public void logOut() {
 // mainMenu.click();
@@ -98,39 +104,32 @@ public class VideoPage extends BasePage {
 // confirmLogOut.click();
 // }
 
+
     public void addVideoByUrl(String Url, String itemName) {
         upLoadMenuItemClick(itemName);
+        assertTrue("addVideoFrom", isElementPresent(addVideoForm));
         addVideoForm.sendKeys(Url);
+        assertTrue("addVideoButton", isElementPresent(addVideoButton));
         addVideoButton.click();
     }
+
 
     public void unSubscribeFromChannels(String... channelName) {
         for (int i = 0; i < channelName.length; i++) {
             unSubscribeFromChannel(channelName[i]);
         }
-    }
 
-
-    public void clickItemByName(String name) {
-        for (WebElement item : driver.findElements(By.cssSelector(videoPageSideItems))) {
-            if (item.getText().equals(name)) {
-                item.click();
-                break;
-            }
-        }
     }
 
     public boolean videoWithSameName(String name) {
-        if (videosNames.contains(name)) {
-            return true;
-        }
-        return false;
+        assertTrue("videoNames", videosNames.contains(name));
+        return true;
     }
 
 
     public void cleanHistory() {
-        cleanHistoryBtn.click();
-        confirmCleanHistory.click();
+        assertTrue("cleanHistoryBtn", isElementPresent(cleanHistoryBtn));
+        assertTrue("confirmCleanHistory", isElementPresent(confirmCleanHistory));
     }
 
     public void clickMyVideoSubMenu(String subMenuItem) {
@@ -143,6 +142,14 @@ public class VideoPage extends BasePage {
         for (WebElement subItem : driver.findElements(By.cssSelector(videoPageSideItems))) {
             if (subItem.getText().equals(subMenuItem)) {
                 subItem.click();
+            }
+        }
+    }
+
+    public void clickItemByName(String name) {
+        for (WebElement element : driver.findElements(By.cssSelector(videoPageSideItems))) {
+            if (element.equals(name)) {
+                element.click();
             }
         }
     }
@@ -167,6 +174,7 @@ public class VideoPage extends BasePage {
 
 
     public void searchVideo(String videoName) {
+        assertTrue("searchBar", isElementPresent(searchBar));
         searchBar.clear();
         searchBar.sendKeys(videoName);
     }
@@ -182,6 +190,9 @@ public class VideoPage extends BasePage {
 
 
     public void createChannel(String channelName) {
+        assertTrue("createChnanelButton", isElementPresent(createButton));
+        assertTrue("inputChannelForm", isElementPresent(inputChannelForm));
+        assertTrue("createButton", isElementPresent(createButton));
         if (!channelExist(channelName)) {
             createChannelButton.click();
             inputChannelForm.sendKeys(channelName);
@@ -190,6 +201,8 @@ public class VideoPage extends BasePage {
     }
 
     public void deleteChannel(String channelName) {
+        assertTrue("deleteChannel", isElementPresent(deleteChannel));
+        assertTrue("confirmDeleteChannel", isElementPresent(confirmDeleteChannel));
         if (channelExist(channelName)) {
             for (WebElement tmp : myChannelsList) {
                 if (tmp.getText().equals(channelName)) {
@@ -206,14 +219,15 @@ public class VideoPage extends BasePage {
     public void assertVideos() {
         try {
             assertTrue(videosFound.isDisplayed());
-            assertTrue(videosFound.getText().matches(VIDEOS_FOUND_REGEX.toString()));
+            assertTrue(videosFound.getText().matches(VIDEOS_FOUND_REGEX));
         } catch (NoSuchElementException e) {
             assertTrue(nothingFound.isDisplayed());
-            assertEquals(NOTHING_FOUND_TEXT.toString(), nothingFound.getText());
+            assertEquals(NOTHING_FOUND_TEXT, nothingFound.getText());
         }
     }
 
     public VideoCard openFirstVideo() {
+        assertTrue("firstVideo", isElementPresent(firstVideo));
         firstVideo.click();
         return new VideoCard(driver);
     }

@@ -13,14 +13,12 @@ import static Enums.LoginInfo.*;
 import static Enums.Pages.FRIENDS;
 import static Enums.Pages.NOTIFICATIONS;
 import static Enums.Relations.*;
+import static Pages.InvitationToGroupLayer.INVITATION_TO_GROUP_TEXT;
 import static org.junit.Assert.*;
 
 public class FriendsPageTest extends TestBase {
     private FriendsPage friendsPage;
-    private FriendsCard vladSenkoCard;
-    private FriendsCard ruslanSultanCard;
     private FriendsCard technopolisBot12Card;
-    private WebDriver driver1;
 
     @Before
     public void setUp() {
@@ -31,29 +29,32 @@ public class FriendsPageTest extends TestBase {
 
     @Test
     public void sendMessageTest() {
-        vladSenkoCard = friendsPage.getFriendCard(VLADISLAV_SENKO);
-        ruslanSultanCard = friendsPage.getFriendCard(RUSLAN_SULTAN);
         String message = "Hello there!" + new Random().nextInt();
-        ruslanSultanCard.sendMessage(message);
-        assertEquals(message, ruslanSultanCard.getLastMessage());
-        vladSenkoCard.sendMessage(message);
-        assertEquals(message, vladSenkoCard.getLastMessage());
+        MessageLayer messagesWithRuslan = friendsPage.getFriendCard(RUSLAN_SULTAN).openMessageLayer();
+        messagesWithRuslan.sendMessage(message);
+        assertEquals(message, messagesWithRuslan.getLastMessage());
+        messagesWithRuslan.closeMessageLayer();
+        MessageLayer messagesWithVlad = friendsPage.getFriendCard(VLADISLAV_SENKO).openMessageLayer();
+        messagesWithVlad.sendMessage(message);
+        assertEquals(message, messagesWithVlad.getLastMessage());
+        messagesWithVlad.closeMessageLayer();
     }
 
     @Test
     public void inviteToGroupTest() {
-        ruslanSultanCard = friendsPage.getFriendCard(RUSLAN_SULTAN);
-        ruslanSultanCard.inviteToGroup();
+        InvitationToGroupLayer ruslanInvitation = friendsPage.getFriendCard(RUSLAN_SULTAN).openInvitationToGroupLayer();
+        assertEquals(INVITATION_TO_GROUP_TEXT, ruslanInvitation.getInvitationText());
+        ruslanInvitation.closeInvitationLayer();
     }
 
     @Test
-    public void searchFriendsTest1() {
+    public void searchFriendsTestNegative() {
         friendsPage.searchFriend("Петр Петров");
         assertFalse(friendsPage.isFriendFound());
     }
 
     @Test
-    public void searchFriendsTest2() {
+    public void searchFriendsTestPositive() {
         friendsPage.searchFriend(RUSLAN_SULTAN.toString());
         assertTrue(friendsPage.isFriendFound());
     }
@@ -62,29 +63,31 @@ public class FriendsPageTest extends TestBase {
     public void specifyRelationsTest1() {
         technopolisBot12Card = friendsPage.getFriendCard(TECHNOPOLIS_BOT12);
         Relations[] relations = {COLLEAGUE, GROUPMATE};
-        technopolisBot12Card.specifyRelation(relations);
-        technopolisBot12Card.checkRelations(relations);
-        driver1 = new ChromeDriver();
+        technopolisBot12Card.openSpecifyRelationLayer().specifyRelation(relations).
+                checkRelations(relations).saveSpecifiedRelations();
+        WebDriver driver1 = new ChromeDriver();
         driver1.get(LOGIN_PAGE_URL.toString());
         new LoginPage(driver1).login(BOT_LOGIN, BOT_PASSWORD);
         new UserMainPage(driver1).openPage(NOTIFICATIONS);
         new NotificationPage(driver1).declineRelations(IVAN_IVANOV);
-        technopolisBot12Card.checkRelations();
+        technopolisBot12Card.openSpecifyRelationLayer().specifyRelation().
+                checkRelations().closeSpecifyRelationLayer();
         driver1.close();
     }
 
     @Test
     public void specifyRelationsTest2() {
         technopolisBot12Card = friendsPage.getFriendCard(TECHNOPOLIS_BOT12);
-        Relations[] relations1 = {BEST_FRIEND, GAME_FRIEND, CLASSMATE};
-        technopolisBot12Card.specifyRelation(relations1);
-        technopolisBot12Card.checkRelations(relations1);
-        driver1 = new ChromeDriver();
+        Relations[] relations = {BEST_FRIEND, GAME_FRIEND, CLASSMATE};
+        technopolisBot12Card.openSpecifyRelationLayer().specifyRelation(relations).
+                checkRelations(relations).saveSpecifiedRelations();
+        WebDriver driver1 = new ChromeDriver();
         driver1.get(LOGIN_PAGE_URL.toString());
         new LoginPage(driver1).login(BOT_LOGIN, BOT_PASSWORD);
         new UserMainPage(driver1).openPage(NOTIFICATIONS);
         new NotificationPage(driver1).declineRelations(IVAN_IVANOV);
-        technopolisBot12Card.checkRelations();
+        technopolisBot12Card.openSpecifyRelationLayer().specifyRelation().
+                checkRelations().closeSpecifyRelationLayer();
         driver1.close();
     }
 }

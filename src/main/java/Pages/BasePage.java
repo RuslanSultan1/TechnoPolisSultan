@@ -28,11 +28,20 @@ public abstract class BasePage {
         check();
     }
 
-    public abstract void check();
+    abstract void check();
 
-    public boolean isElementDisplayed(WebElement element) {
+    public static boolean isElementDisplayed(WebElement element) {
         try {
             return element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public static boolean isElementPresent(WebElement element) {
+        try {
+            element.isDisplayed();
+            return true;
         } catch (NoSuchElementException e) {
             return false;
         }

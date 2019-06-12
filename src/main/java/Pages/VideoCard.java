@@ -1,12 +1,16 @@
 package Pages;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static Enums.AssertsTexts.*;
 import static org.junit.Assert.assertTrue;
 
 public class VideoCard extends BasePage {
+
+    private final static String SUBSCRIBED = ("Подписаны");
+    private final static String UNSUBSCRIBED = ("Подписаться");
+
 
     @Override
     public void check() {
@@ -34,19 +38,19 @@ public class VideoCard extends BasePage {
     private WebElement closeLayer;
     @FindBy(css = ".vp-layer-info_h")
     private WebElement videoName;
-    @FindBy(xpath = "//a[@class='js-video-album-link']")
+    @FindBy(xpath = ".//a[@class='js-video-album-link']")
     private WebElement channelName;
 
     public void subscribe() {
+        assertTrue("subscribeButton", isElementPresent(subcribeButton));
         if (!isSubscribed()) {
             subcribeButton.click();
         }
     }
 
     public void closeVideo() {
-        if (isElementDisplayed(closeLayer)) {
-            closeLayer.click();
-        }
+        assertTrue("closeLayer", isElementPresent(closeLayer));
+        closeLayer.click();
     }
 
 // public void unSubscribe() {
@@ -56,29 +60,27 @@ public class VideoCard extends BasePage {
 // }
 
     public String getVideoName() {
+        assertTrue("videoName", isElementPresent(videoName));
         return videoName.getText();
     }
 
     public String getChannelName() {
-        if (isElementDisplayed(channelName)){
-            return channelName.getText();
-        }
-        return null;
+        assertTrue("channelName", isElementPresent(channelName));
+        return channelName.getText();
     }
 
     public boolean isSubscribed() {
-        return subcribeButton.getText().equals(SUBSCRIBED.toString());
+        assertTrue("subscribeButton", isElementPresent(subcribeButton));
+        return subcribeButton.getText().equals(SUBSCRIBED);
     }
 
     public boolean isPlaying() {
-        try {
-            return playButtonState.isDisplayed();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        assertTrue("playButtonState", isElementPresent(playButtonState));
+        return playButtonState.isDisplayed();
     }
 
     public void stopVideo() {
+        playBtnAssert();
         if (isPlaying()) {
             try {
                 Thread.sleep(1000);
@@ -90,24 +92,36 @@ public class VideoCard extends BasePage {
     }
 
     public void playVideo() {
+        playBtnAssert();
         if (!isPlaying()) {
             playButton.click();
         }
     }
 
+    public void playBtnAssert() {
+        assertTrue("playButton", isElementPresent(playButton));
+    }
+
+    public void likeBtnAssert() {
+        assertTrue("likeButton", isElementPresent(likeButton));
+    }
+
     public void likeVideo() {
+        likeBtnAssert();
         if (!isLiked()) {
             likeButton.click();
         }
     }
 
     public void removeLike() {
+        likeBtnAssert();
         if (isLiked()) {
             likeButton.click();
         }
     }
 
     public boolean isLiked() {
+        likeBtnAssert();
         return likeButton.getAttribute("data-react") != null;
     }
 }

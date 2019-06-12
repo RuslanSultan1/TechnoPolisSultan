@@ -15,25 +15,28 @@ public class LoginPage extends BasePage {
     }
 
     @Override
-    public void check() {
+    void check() {
+        assertTrue("field_email",isElementDisplayed(field_email));
+        assertTrue("field_password",isElementDisplayed(field_password));
+        assertTrue("submitButton",isElementDisplayed(submitButton));
         assertEquals(LOGIN_PAGE_URL.toString(),driver.getCurrentUrl());
-        assertTrue(field_email.isDisplayed());
-        assertTrue(field_password.isDisplayed());
-        assertTrue(submitButton.isDisplayed());
     }
 
-    @FindBy(xpath = ".//input[@id='field_email']")
+    @FindBy(xpath = "//input[@id='field_email']")
     WebElement field_email;
-    @FindBy(xpath = ".//input[@id='field_password']")
+    @FindBy(xpath = "//input[@id='field_password']")
     WebElement field_password;
-    @FindBy(xpath = ".//input[@value='Войти']")
+    @FindBy(xpath = "//input[@value='Войти']")
     WebElement submitButton;
 
     public void login(LoginInfo login, LoginInfo password) {
+        assertTrue("field_email",isElementDisplayed(field_email));
         field_email.clear();
         field_email.sendKeys(login.toString());
+        assertTrue("field_password",isElementDisplayed(field_password));
         field_password.clear();
         field_password.sendKeys(password.toString());
+        assertTrue("submitButton",isElementDisplayed(submitButton));
         submitButton.click();
     }
 }

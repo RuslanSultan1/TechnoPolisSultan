@@ -1,0 +1,21 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Regression Suite" parallel="methods" thread-count="3">
+
+    <!--<test name="RegressionTest">-->
+        <!--<groups>-->
+            <!--<run>-->
+                <!--<include name="Regression"/>-->
+            <!--</run>-->
+        <!--</groups>-->
+        <!--<packages>-->
+            <!--<package name="hw2.ex2"/>-->
+        <!--</packages>-->
+    <!--</test>-->
+    <test name="JenkinsTest" junit="true">
+        <classes>
+            <class name="FriendsPageTest"/>
+        </classes>
+    </test>
+
+</suite>

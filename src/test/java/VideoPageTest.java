@@ -1,17 +1,16 @@
 import Bases.TestBase;
-import Pages.LoginPage;
-import Pages.UserMainPage;
-import Pages.VideoCard;
-import Pages.VideoPage;
+import Pages.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
 
-import static Enums.LoginInfo.IVAN_LOGIN;
-import static Enums.LoginInfo.IVAN_PASSWORD;
+import java.util.concurrent.TimeUnit;
+
+import static Enums.LoginInfo.*;
 import static Enums.Pages.VIDEO;
 import static Enums.VideoSideMenuItems.MY_SUBSCRIPTIONS;
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertFalse;
 
 public class VideoPageTest extends TestBase {
     private LoginPage loginPage;
@@ -20,24 +19,37 @@ public class VideoPageTest extends TestBase {
 
     @Before
     public void setUp() {
-        new LoginPage(driver).login(IVAN_LOGIN, IVAN_PASSWORD);
-        new UserMainPage(driver).openPage(VIDEO);
+        driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        driver.get(LOGIN_PAGE_URL.toString());
+        loginPage = new LoginPage(driver);
+        loginPage.login(IVAN_LOGIN, IVAN_PASSWORD);
+        userMainPage = new UserMainPage(driver);
+        userMainPage.openPage(VIDEO);
         videoPage = new VideoPage(driver);
     }
 
-    @Test
+
+    //@Test
     public void createChannel() {
         videoPage.createChannel("testChannel");
         assertTrue(videoPage.channelExist("testChannel"));
     }
 
-    @Test
+// @Test
+// public void createChannelAndAddVideo(){
+// videoPage.createChannel("testChannel1");
+// videoPage.addVideoByUrl();
+// }
+
+    //@Test
     public void deleteChannel() {
         videoPage.deleteChannel("testChannel1");
         assertFalse(videoPage.channelExist("testChannel1"));
     }
 
-    @Test
+    //@Test()
     public void likeTest() {
         videoPage.searchVideo("cats");
         VideoCard firstVideo = videoPage.openFirstVideo();
@@ -47,18 +59,17 @@ public class VideoPageTest extends TestBase {
         assertTrue(firstVideo.isLiked());
     }
 
-    @Test
+    //@Test()
     public void searchVideoTest() {
         videoPage.searchVideo("cats");
         videoPage.assertVideos();
     }
 
-    @Test
+    //@Test()
     public void subscribeTest() {
         videoPage.searchVideo("cats");
         VideoCard firstVideo = videoPage.openFirstVideo();
         String channelName = firstVideo.getChannelName();
-        System.out.println(channelName);
         firstVideo.subscribe();
         firstVideo.closeVideo();
         videoPage.clickItemByName(MY_SUBSCRIPTIONS.toString());
@@ -67,15 +78,16 @@ public class VideoPageTest extends TestBase {
         assertFalse(videoPage.channelExistInMySubscriptions(channelName));
     }
 
-    @Test
+    //@Test
     public void browsingHistory() {
+        videoPage.clickMyVideoSubMenu("История просмотров");
+        videoPage.cleanHistory();
         videoPage.searchVideo("dogs");
         VideoCard firstVideo = videoPage.openFirstVideo();
         String videoName = firstVideo.getVideoName();
         firstVideo.closeVideo();
         videoPage.clickMyVideoSubMenu("История просмотров");
         videoPage.videoWithSameName(videoName);
-        videoPage.cleanHistory();
         assertFalse(videoPage.videoWithSameName(videoName));
     }
 
@@ -93,6 +105,5 @@ public class VideoPageTest extends TestBase {
 // new LoginPage(secondDriver).login(BOT_LOGIN, BOT_PASSWORD);
 // new UserMainPage(secondDriver).openPage(FRIENDS);
 // FriendsCard ivanIvanov = new FriendsPage(secondDriver).getFriendCard(Friends.IVAN_IVANOV);
-// ivanIvanov.
 // }
 }
